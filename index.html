@@ -14,6 +14,7 @@
 
     <!-- Custom styles for this template -->
     <link href="cover.css" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
 
   <body class="text-center">
@@ -24,8 +25,24 @@
           <h3 class="masthead-brand">MarketViz</h3>
           <nav class="nav nav-masthead justify-content-center">
             <a class="nav-link active" href="#">Home</a>
-            <a class="nav-link" href="#">Features</a>
-            <a class="nav-link" href="#">Login</a>
+            <!-- <a class="nav-link" href="#">Features</a> -->
+            <!-- <a class="nav-link" href="#">Login</a> -->
+            <a class="nav-link">
+              <div id="g_id_onload"
+              data-client_id="758898492485-9ftbsh79fag3m3l1l5m102joagrf0rqg.apps.googleusercontent.com"
+              data-login_uri="http://localhost:3000/auth/callback"
+              data-auto_prompt="false">
+              </div>
+          
+              <div class="g_id_signin"
+              data-type="standard"
+              data-size="medium"
+              data-theme="outline"
+              data-text="signin"
+              data-shape="rectangular"        
+              data-logo_alignment="left">
+              </div>
+            </a>
           </nav>
         </div>
       </header>
@@ -33,10 +50,12 @@
       <main role="main" class="inner cover">
         <h1 class="cover-heading">Smart Stock Analysis</h1>
         <p class="lead">Instant visual insights into a company's finances</p>
-        <p class="lead">
+
+        <!-- CTA -->
+        <!-- <p class="lead">
           <a href="#" class="btn btn-lg btn-secondary">Try MarketViz</a>
           <p>$10/month. Cancel anytime.</p>
-        </p>
+        </p> -->
         <img src="snap.png" class="responsive" />        
       </main>
 
@@ -52,8 +71,45 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <!-- <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script> -->
     <!-- <script src="../../../../assets/js/vendor/popper.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+      function handleCredentialResponse(response) {
+        const idToken = response.credential;  // This is your ID token
+        // console.log("ID Token: ", idToken);
+        // Send the ID token to the server for verification
+        // Local-URL (http://localhost:3000/auth/callback)
+        fetch('https://www.marketviz.io/auth/callback/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ idToken: idToken })
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message === 'Token is valid') {
+            // Token is valid, redirect the user
+            window.location.href = `http://localhost:7000?user=${data.userId}`;  // Redirect to app with user ID in query string
+          }
+        })
+        .catch((error) => console.error('Error:', error)); 
+      }
+  
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: "758898492485-9ftbsh79fag3m3l1l5m102joagrf0rqg.apps.googleusercontent.com",
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("buttonDiv"),
+          { theme: "dark", size: "medium" }  // customization attributes
+        );
+        google.accounts.id.prompt(); // also display the One Tap dialog
+      }
+    </script>
   </body>
 </html>
