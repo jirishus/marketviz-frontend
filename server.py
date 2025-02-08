@@ -8,4 +8,4 @@ server.watch('*.css')  # Watch CSS files
 server.watch('*.js')  # Watch JS files
 server.watch('.', delay=1)  # Watch everything in the current directory
 
-server.serve(port=5500, host='localhost', open_url_delay=1)
+server.serve(port=7000, host='localhost', open_url_delay=1)
